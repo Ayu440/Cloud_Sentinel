@@ -94,6 +94,14 @@ export default function App() {
     return () => clearInterval(interval);
   }, []);
 
+  const uniqueServices = useMemo(() => {
+    return Array.from(new Set(results.map(r => r.service))).sort();
+  }, [results]);
+
+  const uniqueSeverities = useMemo(() => {
+    return Array.from(new Set(results.map(r => r.severity))).sort();
+  }, [results]);
+
   const filteredResults = useMemo(() => {
     return results.filter(r => {
       const matchService = serviceFilter === 'All' || r.service === serviceFilter;
@@ -269,7 +277,7 @@ export default function App() {
                 <Card className="md:col-span-4 shadow-sm border-border/50">
                   <CardHeader>
                     <CardTitle>Compliance by Service</CardTitle>
-                    <CardDescription>Overview of pass/fail distribution across OpenStack components.</CardDescription>
+                    <CardDescription>Overview of pass/fail distribution across MicroStack components.</CardDescription>
                   </CardHeader>
                   <CardContent className="pl-0">
                     <ChartContainer config={chartConfig} className="h-[300px] w-full">
@@ -370,10 +378,9 @@ export default function App() {
                         value={serviceFilter} onChange={(e) => setServiceFilter(e.target.value)}
                       >
                         <option value="All">All Services</option>
-                        <option value="Nova">Nova</option>
-                        <option value="Cinder">Cinder</option>
-                        <option value="Neutron">Neutron</option>
-                        <option value="Swift">Swift</option>
+                        {uniqueServices.map(s => (
+                          <option key={s} value={s}>{s}</option>
+                        ))}
                       </select>
                       
                       <select 
@@ -381,9 +388,9 @@ export default function App() {
                         value={severityFilter} onChange={(e) => setSeverityFilter(e.target.value)}
                       >
                         <option value="All">All Severities</option>
-                        <option value="High">High</option>
-                        <option value="Medium">Medium</option>
-                        <option value="Low">Low</option>
+                        {uniqueSeverities.map(s => (
+                          <option key={s} value={s}>{s}</option>
+                        ))}
                       </select>
                       
                       <select 
@@ -544,14 +551,14 @@ export default function App() {
             <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <Card className="shadow-sm border-border/50">
                 <CardHeader className="border-b border-border/50 bg-muted/10">
-                  <CardTitle>OpenStack Credentials</CardTitle>
-                  <CardDescription>Configure connection parameters for the target OpenStack environment.</CardDescription>
+                  <CardTitle>MicroStack Credentials</CardTitle>
+                  <CardDescription>Configure connection parameters for the target MicroStack environment.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6 pt-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Auth URL</label>
-                      <input type="text" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" placeholder="https://openstack.local:5000/v3" defaultValue="https://openstack.local:5000/v3" />
+                      <input type="text" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" placeholder="https://microstack.local:5000/v3" defaultValue="https://microstack.local:5000/v3" />
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Project Name</label>
